@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "mytomorrows": {
+    "trials-api-angular": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/mytomorrows",
+            "outputPath": "dist/trials-api-angular",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "mytomorrows:build:production"
+              "buildTarget": "trials-api-angular:build:production"
             },
             "development": {
-              "buildTarget": "mytomorrows:build:development"
+              "buildTarget": "trials-api-angular:build:development"
             }
           },
           "defaultConfiguration": "development"

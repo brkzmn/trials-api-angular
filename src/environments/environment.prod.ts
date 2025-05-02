@@ -2,3 +2,4 @@ export const environment = {
   production: true,
   apiUrl: 'https://clinicaltrials.gov/api/v2/studies',
 };
+// remove env files 
