@@ -3,7 +3,7 @@
 
   <div class="toggler">
     <label>
-      <input type="checkbox" (change)="onToggleChange($event)" />
+      <input type="checkbox" (change)="onToggleChange()" />
       Enable Auto Fetch
     </label>
   </div>
@@ -13,27 +13,30 @@
       <li class="trial-item">
         <input
           type="checkbox"
+          #cb
+          [checked]="selectedTrials().includes(trial.NCTId)"
+          (change)="toggleSelection(trial.NCTId, cb.checked)"
         />
         <span class="trial-title">{{ trial.NCTId }}</span>
         <span class="trial-title">{{ trial.BriefTitle }}</span>
         <span class="trial-status">({{ trial.OverallStatus }})</span>
-  
-        <!-- <button (click)="">
-          {{ favoritesService.getFavorites()().includes(trial.NCTId) ? 'Unfavorite' : 'Favorite' }}
-        </button> -->
-      </li>
+        @if (favoritesService.getFavorites()().includes(trial.NCTId)) {
+          <span
+            class="material-symbols-outlined"
+            style="cursor: pointer;"
+          >favorite</span>
+        }
+      </li>  
     } 
     @empty {
-        <li class="trial-item">
-            <span>No trials available</span>
-          </li>
+      <li class="trial-item">
+        <span class="no-trials-message">No trials available</span>
+      </li>
     }
-
   </ul>
 
-  <!-- Batch operation buttons -->
   <div class="batch-actions">
-    <!-- <button (click)="addSelectedToFavorites()">Add Selected to Favorites</button>
-    <button (click)="removeSelectedFromFavorites()">Remove Selected from Favorites</button> -->
+    <button (click)="onAddSelectedToFavorites()">Add Selected to Favorites</button>
+    <button (click)="onRemoveSelectedFromFavorites()">Remove Selected from Favorites</button>
   </div>
 </div>

@@ -1,5 +1,6 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { TrialService } from '../../services/trial.service';
+import { FavoritesService } from '../../services/favorites.service';
 import { TrialItem } from '../../models/trial-item.model';
 
 @Component({
@@ -11,32 +12,26 @@ import { TrialItem } from '../../models/trial-item.model';
 })
 export class HomeComponent {
   private trialService = inject(TrialService);
+  public favoritesService = inject(FavoritesService);
 
-  // Signal for the list of trials
   trialList = signal<TrialItem[]>([]);
-
-  // Signal for toggler state
   toggler = signal(false);
+  // This signal holds the selected trial IDs. It is cleared after addition or removal
+  selectedTrials = signal<string[]>([]);
 
   constructor() {
-    // Fetch data on page load
     this.fetchTrialList();
-
-    // Effect to handle periodic updates when toggler is enabled
+    
     effect(() => {
       let intervalId: any;
 
       if (this.toggler()) {
-        // Fetch immediately when toggler is enabled
         this.fetchTrialList();
-
-        // Start periodic fetch every 5 seconds
         intervalId = setInterval(() => {
           this.fetchTrialList();
         }, 5000);
       }
 
-      // Cleanup logic: stop the interval when toggler is turned off
       return () => {
         if (intervalId) {
           clearInterval(intervalId);
@@ -45,18 +40,35 @@ export class HomeComponent {
     });
   }
 
-  // Fetch trial list and merge with existing data
-  private fetchTrialList() {
-    this.trialService.fetchTrialList().then((newTrials) => {
-      console.log('Fetched trials:', newTrials);
-      // Merge new trials with the existing list and keep only the latest 10 records
-      const updatedList = [...newTrials, ...this.trialList()].slice(0, 10);
-      this.trialList.set(updatedList);
-    });
+  private async fetchTrialList() {
+    const newTrials = await this.trialService.fetchTrialList();
+    const updatedList = [...newTrials, ...this.trialList()].slice(0, 10);
+    this.trialList.set(updatedList);
   }
 
-  // Handle toggler change
-  onToggleChange(event: Event) {
-    this.toggler.set((event.target as HTMLInputElement).checked);
+  onToggleChange() {
+  }
+
+  toggleSelection(trialId: string, checked: boolean) {
+    const selected = this.selectedTrials();
+
+    if (checked) {
+      this.selectedTrials.set([...selected, trialId]);
+    } else {
+      this.selectedTrials.set(selected.filter(id => id !== trialId));
+    }
+  }
+
+  // This method is called when the "Add to Favorites" button is clicked
+  onAddSelectedToFavorites() {
+    this.selectedTrials().forEach(id => this.favoritesService.addFavorite(id));
+    this.selectedTrials.set([]);
+    console.log('Selected trials added to favorites:', this.favoritesService.getFavorites());
+  }
+  
+  // This method is called when the "Remove from Favorites" button is clicked
+  onRemoveSelectedFromFavorites() {
+    this.selectedTrials().forEach(id => this.favoritesService.removeFavorite(id));
+    this.selectedTrials.set([]);
   }
 }

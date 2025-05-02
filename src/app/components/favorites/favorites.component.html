@@ -1,1 +1,25 @@
-<p>favorites works!</p>
+<ul class="trial-list">
+  @for (trial of favoriteTrials(); track trial.NCTId) {
+    <li class="trial-item">
+      <input
+        type="checkbox"
+        #cb
+        [checked]="selectedFavorites().includes(trial.NCTId)"
+        (change)="onFavoriteSelectionToggle(trial.NCTId, cb.checked)"
+      />
+      <span class="trial-title">{{ trial.NCTId }}</span>
+      <span class="trial-title">{{ trial.BriefTitle }}</span>
+      <span class="trial-status">({{ trial.OverallStatus }})</span>
+    </li>
+  } 
+  @empty {
+    <li class="trial-item">
+      <span>No favorite trials available</span>
+    </li>
+  }
+</ul>
+@if(favoriteTrials().length > 0) {
+  <div class="batch-actions">
+    <button (click)="onRemoveSelectedFavorites()">Remove Selected from Favorites</button>
+  </div>
+}

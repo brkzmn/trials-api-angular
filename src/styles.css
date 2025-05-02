@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+.trial-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+  
+.no-trials-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #e57373;
+  padding: 12px 0;
+  border-radius: 6px;
+}
