@@ -1,4 +1,4 @@
-export interface TrialItem {
+export interface Trial {
   NCTId: string;
   BriefTitle: string;
   OverallStatus: string;

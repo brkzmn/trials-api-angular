@@ -1,7 +1,7 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { FavoritesService } from '../../services/favorites.service';
 import { TrialService } from '../../services/trial.service';
-import { TrialItem } from '../../models/trial-item.model';
+import { Trial } from '../../models/trial.model';
 
 @Component({
   selector: 'app-favorites',
@@ -16,7 +16,7 @@ export class FavoritesComponent {
   private trialService = inject(TrialService);
 
   // This signal holds the list of favorite trials
-  favoriteTrials = signal<TrialItem[]>([]);
+  favoriteTrials = signal<Trial[]>([]);
   // This signal holds the selected trial IDs. It is cleared after addition or removal
   selectedFavorites = signal<string[]>([]);
 
@@ -28,7 +28,7 @@ export class FavoritesComponent {
   }
 
   private async fetchFavoriteTrials(ids: string[]) {
-    const trials: TrialItem[] = [];
+    const trials: Trial[] = [];
     for (const id of ids) {
       try {
         const trial = await this.trialService.fetchTrialById(id);
@@ -36,7 +36,7 @@ export class FavoritesComponent {
           trials.push(trial);
         }
       } catch (e) {
-        // TODO:handle error
+        console.error(`Error fetching trial with ID ${id}:`, e);
       }
     }
     this.favoriteTrials.set(trials);

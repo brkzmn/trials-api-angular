@@ -2,7 +2,7 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { TrialService } from '../../services/trial.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { AutoFetchService } from '../../services/auto-fetch.service';
-import { TrialItem } from '../../models/trial-item.model';
+import { Trial } from '../../models/trial.model';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +16,7 @@ export class HomeComponent {
   public favoritesService = inject(FavoritesService);
   public autoFetchService = inject(AutoFetchService);
 
-  trialList = signal<TrialItem[]>([]);
+  trialList = signal<Trial[]>([]);
   toggler = signal(false);
   // This signal holds the selected trial IDs. It is cleared after addition or removal
   selectedTrials = signal<string[]>([]);
@@ -26,7 +26,7 @@ export class HomeComponent {
     this.fetchTrialList();
     
     effect((onCleanup) => {
-      let intervalId: any;
+      let intervalId: ReturnType<typeof setInterval>;
       const togglerValue = this.autoFetchService.toggler(); // Use service signal
       
       if (togglerValue) {

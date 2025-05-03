@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { TrialItem } from '../models/trial-item.model';
+import { Trial } from '../models/trial.model';
+import { Study } from '../models/study.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { TrialItem } from '../models/trial-item.model';
 export class TrialService {
   private apiUrl = environment.apiUrl;
 
-  private mapStudyToTrialItem(study: any): TrialItem {
+  private mapStudyToTrialItem(study: Study): Trial {
     return {
       NCTId: study.protocolSection?.identificationModule?.nctId ?? '',
       BriefTitle: study.protocolSection?.identificationModule?.briefTitle ?? '',
@@ -18,7 +19,7 @@ export class TrialService {
   }
 
   // Fetches a list of trials from the API. It gets the trials by latest update date.
-  async fetchTrialList(pageSize: number = 10): Promise<TrialItem[]> {
+  async fetchTrialList(pageSize = 10): Promise<Trial[]> {
     const fields = 'NCTId|BriefTitle|OverallStatus|HasResults';
     const sort = 'LastUpdatePostDate:desc';
     const url = `${this.apiUrl}?fields=${fields}&pageSize=${pageSize}&sort=${sort}`;
@@ -31,7 +32,7 @@ export class TrialService {
     return (data.studies || []).map(this.mapStudyToTrialItem);
   }
 
-  async fetchTrialById(id: string): Promise<TrialItem | null> {
+  async fetchTrialById(id: string): Promise<Trial | null> {
     const fields = 'NCTId|BriefTitle|OverallStatus|HasResults';
     const res = await fetch(`${this.apiUrl}/${id}?fields=${fields}`);
 
@@ -39,7 +40,6 @@ export class TrialService {
       throw new Error(`Error fetching trial: ${res.statusText}`);
     }
     const data = await res.json();
-    const study = (data.studies && data.studies[0]) ? data.studies[0] : null;
     return data ? this.mapStudyToTrialItem(data) : null;
   }  
 }
