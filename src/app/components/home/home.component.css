@@ -4,8 +4,3 @@
     color: #e53935; /* red for favorite */
   }
 
-  .material-symbols-outlined.favorited {
-    color: yellow; 
-    font-size: 24px;
-    font-variation-settings: 'FILL' 1;
-  }

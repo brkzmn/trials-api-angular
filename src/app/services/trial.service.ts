@@ -39,9 +39,7 @@ export class TrialService {
       throw new Error(`Error fetching trial: ${res.statusText}`);
     }
     const data = await res.json();
-    console.log(  'Fetched trial data:', data);
     const study = (data.studies && data.studies[0]) ? data.studies[0] : null;
-    console.log('Mapped study to TrialItem:', study);
     return data ? this.mapStudyToTrialItem(data) : null;
   }  
 }

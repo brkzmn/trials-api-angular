@@ -3,19 +3,28 @@
 
   <div class="toggler">
     <label>
-      <input type="checkbox" (change)="onToggleChange()" />
+      <input type="checkbox" 
+      #autoFetchCb
+      [checked]="autoFetchService.toggler()"
+      (change)="onToggleChange(autoFetchCb.checked)" />
       Enable Auto Fetch
     </label>
   </div>
 
   <ul class="trial-list">
+    @if (loading()) {
+      <li class="trial-item">
+        <span class="loading-message">Loading trials...</span>
+      </li>
+    }
+
     @for (trial of trialList(); track trial.NCTId) {
       <li class="trial-item">
         <input
           type="checkbox"
-          #cb
+          #trialItemCb
           [checked]="selectedTrials().includes(trial.NCTId)"
-          (change)="toggleSelection(trial.NCTId, cb.checked)"
+          (change)="toggleSelection(trial.NCTId, trialItemCb.checked)"
         />
         <span class="trial-title">{{ trial.NCTId }}</span>
         <span class="trial-title">{{ trial.BriefTitle }}</span>
@@ -23,7 +32,6 @@
         @if (favoritesService.getFavorites()().includes(trial.NCTId)) {
           <span
             class="material-symbols-outlined"
-            style="cursor: pointer;"
           >favorite</span>
         }
       </li>  

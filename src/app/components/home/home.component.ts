@@ -1,6 +1,7 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { TrialService } from '../../services/trial.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { AutoFetchService } from '../../services/auto-fetch.service';
 import { TrialItem } from '../../models/trial-item.model';
 
 @Component({
@@ -13,40 +14,49 @@ import { TrialItem } from '../../models/trial-item.model';
 export class HomeComponent {
   private trialService = inject(TrialService);
   public favoritesService = inject(FavoritesService);
+  public autoFetchService = inject(AutoFetchService);
 
   trialList = signal<TrialItem[]>([]);
   toggler = signal(false);
   // This signal holds the selected trial IDs. It is cleared after addition or removal
   selectedTrials = signal<string[]>([]);
+  loading = signal(false);
 
   constructor() {
     this.fetchTrialList();
     
-    effect(() => {
+    effect((onCleanup) => {
       let intervalId: any;
-
-      if (this.toggler()) {
+      const togglerValue = this.autoFetchService.toggler(); // Use service signal
+      
+      if (togglerValue) {
         this.fetchTrialList();
         intervalId = setInterval(() => {
           this.fetchTrialList();
         }, 5000);
       }
-
-      return () => {
+  
+      onCleanup(() => {
         if (intervalId) {
           clearInterval(intervalId);
         }
-      };
+      });
     });
   }
 
   private async fetchTrialList() {
-    const newTrials = await this.trialService.fetchTrialList();
-    const updatedList = [...newTrials, ...this.trialList()].slice(0, 10);
-    this.trialList.set(updatedList);
+    this.loading.set(true);
+    try {
+      const newTrials = await this.trialService.fetchTrialList();
+      const updatedList = [...newTrials, ...this.trialList()].slice(0, 10);
+      this.trialList.set(updatedList);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  onToggleChange() {
+  onToggleChange(checked: boolean) {
+    this.autoFetchService.toggleAutoFetch(checked);
   }
 
   toggleSelection(trialId: string, checked: boolean) {
@@ -63,7 +73,6 @@ export class HomeComponent {
   onAddSelectedToFavorites() {
     this.selectedTrials().forEach(id => this.favoritesService.addFavorite(id));
     this.selectedTrials.set([]);
-    console.log('Selected trials added to favorites:', this.favoritesService.getFavorites());
   }
   
   // This method is called when the "Remove from Favorites" button is clicked
