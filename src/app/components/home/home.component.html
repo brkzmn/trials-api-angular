@@ -1,50 +1,56 @@
-<div class="trial-container">
-  <h2>Trials</h2>
-
+<div class="home-container">
   <div class="toggler">
-    <label>
-      <input type="checkbox" 
-      #autoFetchCb
-      [checked]="autoFetchService.toggler()"
-      (change)="onToggleChange(autoFetchCb.checked)" />
-      Enable Auto Fetch
-    </label>
+    <button class="btn btn-light toggle-btn"
+            (click)="autoFetchService.toggleAutoFetch(!autoFetchService.toggler())"
+            [attr.aria-pressed]="autoFetchService.toggler()">
+      <i class="bi"
+         [class.bi-toggle-on]="autoFetchService.toggler()"
+         [class.text-success]="autoFetchService.toggler()"
+         [class.bi-toggle-off]="!autoFetchService.toggler()"
+         [class.text-danger]="!autoFetchService.toggler()"
+         style="font-size: 2rem;"></i>
+      <span class="ms-2">
+        {{ autoFetchService.toggler() ? 'Auto Fetch ON' : 'Auto Fetch OFF' }}
+      </span>
+    </button>
   </div>
+  <div class="intro-text">Find the latest clinical trials.</div>
 
-  <ul class="trial-list">
+  <ul class="list-group">
     @if (loading()) {
-      <li class="trial-item">
-        <span class="loading-message">Loading trials...</span>
-      </li>
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     }
 
     @for (trial of trialList(); track trial.NCTId) {
-      <li class="trial-item">
+      <li class="list-group-item d-flex align-items-center">
         <input
+          class="form-check-input me-2"
           type="checkbox"
-          #trialItemCb
+          #trialCheckbox
+          id="trial-{{trial.NCTId}}"
           [checked]="selectedTrials().includes(trial.NCTId)"
-          (change)="toggleSelection(trial.NCTId, trialItemCb.checked)"
+          (change)="toggleSelection(trial.NCTId, trialCheckbox.checked)"
         />
-        <span class="trial-title">{{ trial.NCTId }}</span>
-        <span class="trial-title">{{ trial.BriefTitle }}</span>
-        <span class="trial-status">({{ trial.OverallStatus }})</span>
-        @if (favoritesService.getFavorites()().includes(trial.NCTId)) {
-          <span
-            class="material-symbols-outlined"
-          >favorite</span>
-        }
-      </li>  
-    } 
+        <label class="form-check-label flex-grow-1" for="trial-{{trial.NCTId}}">
+          <span class="trial-title">{{ trial.BriefTitle }}</span>
+          @if (favoritesService.getFavorites()().includes(trial.NCTId)) {
+            <i class="bi bi-star-fill text-warning ms-2"></i>
+          }
+          <span class="trial-status">Status: {{ trial.OverallStatus }}</span>
+        </label>
+      </li>
+    }
     @empty {
-      <li class="trial-item">
-        <span class="no-trials-message">No trials available</span>
+      <li class="list-group-item">
+        <span class="text-info">No trials available</span>
       </li>
     }
   </ul>
 
   <div class="batch-actions">
-    <button (click)="onAddSelectedToFavorites()">Add Selected to Favorites</button>
-    <button (click)="onRemoveSelectedFromFavorites()">Remove Selected from Favorites</button>
+    <button class="btn btn-warning" (click)="onAddSelectedToFavorites()">Add Selected to Favorites</button>
+    <button class="btn btn-danger" (click)="onRemoveSelectedFromFavorites()">Remove Selected from Favorites</button>
   </div>
 </div>

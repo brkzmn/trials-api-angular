@@ -1,6 +1,39 @@
-.material-symbols-outlined {
-    font-size: 24px;
-    vertical-align: middle;
-    color: #e53935; /* red for favorite */
-  }
+.home-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
 
+.toggler {
+  display: flex;
+  margin-bottom: 1rem;
+  justify-content: flex-end
+}
+
+.toggle-on {
+  color: #4caf50;
+}
+
+.toggle-off {
+  color: #e53935;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    border: none;
+    background: none;
+  padding: 0.4rem;
+}
+
+.intro-text {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #14342B;
+}
+
+.batch-actions {
+  display: flex;
+  justify-content: space-around;
+  margin: 1rem;
+}

@@ -1,14 +1,5 @@
-
-<style>
-  @media screen and (max-width: 650px) {
-    }
-  
-</style>
-<app-navbar />
 <main class="main">
-  <div class="content">
-    <h1>{{title}}</h1>
-  </div>
+  <app-navbar [title]="title"></app-navbar>
 </main>
 <router-outlet></router-outlet>
 

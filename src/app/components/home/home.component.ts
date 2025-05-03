@@ -55,8 +55,8 @@ export class HomeComponent {
     }
   }
 
-  onToggleChange(checked: boolean) {
-    this.autoFetchService.toggleAutoFetch(checked);
+  onToggleChange(isEnabled: boolean) {
+    this.autoFetchService.toggleAutoFetch(isEnabled);
   }
 
   toggleSelection(trialId: string, checked: boolean) {
