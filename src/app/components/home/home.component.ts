@@ -48,8 +48,22 @@ export class HomeComponent {
     this.loading.set(true);
     try {
       const newTrials = await this.trialService.fetchTrialList();
-      const updatedList = [...newTrials, ...this.trialList()].slice(0, 10);
-      this.trialList.set(updatedList);
+      const current = this.trialList();
+      if(current.length === 0) {
+        this.trialList.set(newTrials);
+      } else {
+        const updated = [...current]; 
+        newTrials.forEach(trial => {
+          if (!current.some(existing => existing.NCTId === trial.NCTId)) {
+            updated.unshift(trial);
+          }
+        });
+  
+        this.trialList.set(updated.slice(0, 10)); 
+      }
+    } catch (error) {
+      console.error('Error fetching trial list:', error);
+      this.trialList.set([]);
     } finally {
       this.loading.set(false);
     }
